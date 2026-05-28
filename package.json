@@ -1,0 +1,19 @@
+{
+  "name": "frotiq-fleet-intelligence",
+  "version": "1.0.0",
+  "description": "FROTIQ - Fleet Intelligence Platform",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "export": "next export"
+  },
+  "dependencies": {
+    "react": "^18",
+    "react-dom": "^18",
+    "next": "^14",
+    "recharts": "^2.10.0",
+    "lucide-react": "^0.383.0",
+    "xlsx": "^0.18.5"
+  }
+}
