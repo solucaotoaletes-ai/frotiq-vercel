@@ -2066,25 +2066,28 @@ const XLSX = window.XLSX;
    TEMA
 ============================================================ */
 const T = {
-  bg: "#0A0D13",
-  surface: "#10141E",
-  surface2: "#161B28",
-  surface3: "#1C2230",
-  border: "#232A3A",
-  borderSoft: "#1A2030",
-  text: "#EAEDF3",
-  textDim: "#8C95AB",
-  textFaint: "#5A6276",
-  accent: "#E8B81F",
-  accentSoft: "#3A2F12",
-  emerald: "#37D399",
-  emeraldSoft: "#10271F",
-  rose: "#FB6B82",
-  roseSoft: "#2A141B",
-  sky: "#4CC2F2",
-  skySoft: "#0F2230",
-  violet: "#A98BF6",
-  cyan: "#34D6C8"
+  bg: "#F4F6F8",
+  surface: "#FFFFFF",
+  surface2: "#EEF1F4",
+  surface3: "#E4E9EE",
+  border: "#D0D8E0",
+  borderSoft: "#E4E9EE",
+  text: "#1A2332",
+  textDim: "#4A5568",
+  textFaint: "#8A96A8",
+  accent: "#E8A020",
+  accentSoft: "#FEF3DC",
+  emerald: "#0D8A5E",
+  emeraldSoft: "#E0F5ED",
+  rose: "#D64045",
+  roseSoft: "#FDEAEA",
+  sky: "#0D8A99",
+  skySoft: "#E0F4F6",
+  violet: "#5B4DB8",
+  cyan: "#0D8A99",
+  teal: "#0D8A99",
+  tealSoft: "#E0F4F6",
+  tealDark: "#0A6B78"
 };
 const fmtBRL = n => (n < 0 ? "-" : "") + "R$ " + Math.abs(Math.round(n)).toLocaleString("pt-BR");
 const fmtNum = (n, d = 0) => n.toLocaleString("pt-BR", {
@@ -4108,7 +4111,7 @@ const Card = ({
     onMouseEnter: () => setH(true),
     onMouseLeave: () => setH(false),
     style: {
-      background: T.surface,
+      background: T.teal,
       border: `1px solid ${h && hover ? T.border : T.borderSoft}`,
       borderRadius: 16,
       padding: pad,
@@ -4195,7 +4198,7 @@ const KPI = ({
 }, /*#__PURE__*/React.createElement("div", {
   style: {
     fontSize: 12,
-    color: T.textDim,
+    color: "rgba(255,255,255,0.75)",
     fontWeight: 500
   }
 }, label), /*#__PURE__*/React.createElement("div", {
@@ -4263,7 +4266,7 @@ const TT = ({
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      color: T.textDim,
+      color: "rgba(255,255,255,0.75)",
       marginBottom: 5,
       fontWeight: 600
     }
@@ -4280,7 +4283,7 @@ const TT = ({
     cor: p.color || p.fill
   }), /*#__PURE__*/React.createElement("span", {
     style: {
-      color: T.textDim
+      color: "rgba(255,255,255,0.75)"
     }
   }, p.name, ":"), /*#__PURE__*/React.createElement("span", {
     style: {
@@ -4423,7 +4426,7 @@ function CopilotChat({
     style: {
       maxWidth: "82%",
       background: m.role === "user" ? T.accent : T.surface2,
-      color: m.role === "user" ? "#0A0D13" : T.text,
+      color: m.role === "user" ? "#F4F6F8" : T.text,
       padding: "10px 13px",
       borderRadius: 12,
       fontSize: 13,
@@ -4528,7 +4531,7 @@ function CopilotChat({
     }
   }, /*#__PURE__*/React.createElement(Send, {
     size: 15,
-    color: "#0A0D13"
+    color: "#F4F6F8"
   }))));
 }
 
@@ -5320,7 +5323,7 @@ function Fleet({
     onClick: () => setFilter(k),
     style: {
       background: filter === k ? T.accent : T.surface2,
-      color: filter === k ? "#0A0D13" : T.textDim,
+      color: filter === k ? "#F4F6F8" : T.textDim,
       border: `1px solid ${filter === k ? T.accent : T.borderSoft}`,
       padding: "8px 14px",
       borderRadius: 10,
@@ -7227,7 +7230,7 @@ function ReportsView() {
     key: p,
     style: {
       background: i === 2 ? T.accent : T.surface2,
-      color: i === 2 ? "#0A0D13" : T.textDim,
+      color: i === 2 ? "#F4F6F8" : T.textDim,
       border: `1px solid ${i === 2 ? T.accent : T.borderSoft}`,
       padding: "7px 13px",
       borderRadius: 9,
@@ -7598,7 +7601,7 @@ function App() {
     }
   }, /*#__PURE__*/React.createElement(Truck, {
     size: 18,
-    color: "#0A0D13"
+    color: "#F4F6F8"
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 16,
@@ -7684,7 +7687,7 @@ function App() {
     }, DOCS.filter(d => d.status === "vencido").length), n.k === "ai" && /*#__PURE__*/React.createElement("span", {
       style: {
         background: T.accent,
-        color: "#0A0D13",
+        color: "#F4F6F8",
         fontSize: 9.5,
         fontWeight: 700,
         padding: "1px 6px",
@@ -7845,10 +7848,10 @@ function App() {
     }
   }, copilotOpen ? /*#__PURE__*/React.createElement(X, {
     size: 22,
-    color: "#0A0D13"
+    color: "#F4F6F8"
   }) : /*#__PURE__*/React.createElement(Sparkles, {
     size: 22,
-    color: "#0A0D13"
+    color: "#F4F6F8"
   })), copilotOpen && /*#__PURE__*/React.createElement("div", {
     style: {
       position: "fixed",
