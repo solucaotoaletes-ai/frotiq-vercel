@@ -5569,6 +5569,7 @@ function DriversView() {
 }
 function FuelView() {
   const m = fleetMetrics();
+  const topFuelData = [...VEHICLES].filter(v => v.custoComb > 0).sort((a,b) => b.custoComb - a.custoComb).slice(0, 10).map(v => ({ placa: v.placa, valor: Math.round(v.custoComb) }));
   const litros = VEHICLES.reduce((a, v) => a + v.litros, 0);
   const postos = SUPPLIERS.filter(s => s.tipo === "Combustível");
   const precoMedio = postos.length ? postos.reduce((a, s) => a + s.preco * s.litros, 0) / postos.reduce((a, s) => a + s.litros, 0) : 0;
@@ -5617,6 +5618,26 @@ function FuelView() {
     icon: AlertTriangle,
     accent: T.accent
   })), /*#__PURE__*/React.createElement("div", {
+    style: { background: T.card, border: "1px solid " + T.border, borderRadius: 14, padding: 18 }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 4 }
+  }, "Ve\xEDculos que mais gastaram com abastecimento"), /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 12, color: T.textDim, marginBottom: 14 }
+  }, "Top 10 por valor (R$) \u2014 separado por placa"), /*#__PURE__*/React.createElement(ResponsiveContainer, {
+    width: "100%", height: 340
+  }, /*#__PURE__*/React.createElement(BarChart, {
+    data: topFuelData, layout: "vertical", margin: { top: 4, right: 24, left: 8, bottom: 4 }
+  }, /*#__PURE__*/React.createElement(CartesianGrid, {
+    strokeDasharray: "3 3", stroke: T.border, horizontal: false
+  }), /*#__PURE__*/React.createElement(XAxis, {
+    type: "number", tick: { fill: T.textDim, fontSize: 11 }, tickFormatter: function(v){return "R$ " + (v/1000).toFixed(0) + "k";}
+  }), /*#__PURE__*/React.createElement(YAxis, {
+    type: "category", dataKey: "placa", tick: { fill: T.text, fontSize: 11 }, width: 80
+  }), /*#__PURE__*/React.createElement(Tooltip, {
+    contentStyle: { background: T.bg, border: "1px solid " + T.border, borderRadius: 8, color: T.text }, formatter: function(v){return [fmtBRL(v), "Combust\xEDvel"];}
+  }), /*#__PURE__*/React.createElement(Bar, {
+    dataKey: "valor", fill: T.accent, radius: [0, 6, 6, 0], barSize: 18
+  })))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "grid",
       gridTemplateColumns: "1fr 1fr",
@@ -7648,6 +7669,36 @@ function App() {
     compact: true
   })))));
 }
+
+// ===== SCORE + INSIGHTS DINAMICOS (pos-definicao) =====
+try {
+  if (Array.isArray(VEHICLES)) {
+    var cks = VEHICLES.map(function(v){return v.custoKm||0;}).filter(function(x){return x>0;});
+    var maxCk = cks.length ? Math.max.apply(null, cks) : 1;
+    VEHICLES.forEach(function(v){
+      var s = 100;
+      if (v.custoKm > 0 && maxCk > 0) s -= (v.custoKm/maxCk)*45;
+      s -= Math.min((v.manutAno||0)*1.2, 25);
+      s -= Math.min((v.nMultas||0)*2.5, 20);
+      if (v.media > 0 && v.tipo === "Caminhao" && v.media < 3.5) s -= 8;
+      v.score = Math.max(5, Math.min(100, Math.round(s)));
+    });
+  }
+  if (Array.isArray(INSIGHTS) && Array.isArray(VEHICLES)) {
+    var fBRL = function(n){return "R$ "+Math.round(n).toLocaleString("pt-BR");};
+    var byCk = VEHICLES.filter(function(v){return v.custoKm>0;}).slice().sort(function(a,b){return b.custoKm-a.custoKm;});
+    var byManut = VEHICLES.slice().sort(function(a,b){return b.custoManut-a.custoManut;});
+    var byComb = VEHICLES.slice().sort(function(a,b){return b.custoComb-a.custoComb;});
+    var byMultas = VEHICLES.filter(function(v){return (v.nMultas||0)>0;}).slice().sort(function(a,b){return b.custoMultas-a.custoMultas;});
+    var ni = [];
+    if (byCk[0]) ni.push({id:1,tipo:"Risco",sev:"critica",titulo:byCk[0].placa+" opera com o pior custo/km da frota",texto:"O "+byCk[0].modelo+" ("+byCk[0].unidade+") registra "+fBRL(byCk[0].custoKm)+"/km, o mais alto da frota, com "+(byCk[0].manutAno||0)+" lancamentos de manutencao e "+fBRL(byCk[0].custoManut)+" em reparos. Recomenda-se avaliar a renovacao do veiculo.",economia:Math.round(byCk[0].custoManut*0.15),acao:"Frota",icon:AlertTriangle});
+    if (byManut[0]) ni.push({id:2,tipo:"Manutencao",sev:"critica",titulo:byManut[0].placa+" concentra o maior gasto de manutencao",texto:"O "+byManut[0].modelo+" ("+byManut[0].unidade+") acumula "+fBRL(byManut[0].custoManut)+" em manutencao com "+(byManut[0].manutAno||0)+" intervencoes no periodo. Vale priorizar uma analise de causa raiz.",economia:Math.round(byManut[0].custoManut*0.12),acao:"Manutencao",icon:AlertTriangle});
+    if (byComb[0]) ni.push({id:3,tipo:"Combustivel",sev:"alerta",titulo:byComb[0].placa+" lidera o consumo de combustivel",texto:"O "+byComb[0].modelo+" ("+byComb[0].unidade+") consumiu "+fBRL(byComb[0].custoComb)+" em combustivel ("+(byComb[0].nAbast||0)+" abastecimentos), media de "+(byComb[0].media||0).toFixed(1)+" km/L. Monitorar rotas e estilo de conducao.",economia:Math.round(byComb[0].custoComb*0.08),acao:"Combustivel",icon:AlertTriangle});
+    if (byMultas[0]) ni.push({id:4,tipo:"Multas",sev:"alerta",titulo:byMultas[0].placa+" acumula multas relevantes",texto:"O "+byMultas[0].modelo+" ("+byMultas[0].unidade+") registra "+fBRL(byMultas[0].custoMultas)+" em "+(byMultas[0].nMultas||0)+" multas. Reforcar orientacao ao condutor pode eliminar esse custo.",economia:byMultas[0].custoMultas,acao:"Frota",icon:AlertTriangle});
+    if (ni.length){ INSIGHTS.length = 0; ni.forEach(function(x){INSIGHTS.push(x);}); }
+  }
+} catch(err) { console.error("Erro insights:", err); }
+
 ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));}catch(e){console.error(e);alert("Erro: "+e.message);}
 
 // ===== VEHICLE HISTORY =====
